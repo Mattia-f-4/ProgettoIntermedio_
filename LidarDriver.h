@@ -12,7 +12,7 @@ class LidarDriver
 
     //costanti per dimensione buffer valori e risoluzione Lidar
     constexpr int static BUFFER_DIM {10}; 
-    const double risoluzione;
+    double risoluzione; //VERIFICARE SE SI RIESCE COSTANTE
 
     //numero di elementi nel buffer
     int size;
@@ -25,14 +25,14 @@ class LidarDriver
     //Costruttore per creare un LidarDriver vuoto, con risoluzione inserita come parametro
     explicit LidarDriver(double);
     
-    //Costruttore per creare un LidarDriver da un vettore di valori, con risoluzione inserita come parametro
-    LidarDriver(double, vector<vector<double>>);
-
     //Costruttore di copia
     LidarDriver(const LidarDriver&);
     
     //Move costructor
     LidarDriver(LidarDriver&&);
+
+    //Operator=
+    LidarDriver& operator=(const LidarDriver&);
 
     //Move assignment
     LidarDriver& operator=(LidarDriver&&);
@@ -51,8 +51,11 @@ class LidarDriver
     
     
     //Funzione di debug che restituisce 
-    int getSize(){return buffer.max_size();}; 
-    
+    int getSize() const
+    {return buffer.max_size();}; 
+
+    //Funzione di supporto per operator<<
+    const vector<double>& getMisurazione(int) const;    
 
 };
 #endif
