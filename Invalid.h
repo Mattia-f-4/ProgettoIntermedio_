@@ -7,11 +7,10 @@
     {
         public:
 
-        //LO DEFINISCO QUI PER RENDERLO UTILIZZABILE ANCHE DA FUORI
         enum class ErrorType
         {
-            IndexOutOfBoundException
-            InvalidValue //lo usiamo per la definizione e per getdistance?
+            IndexOutOfBoundException,
+            InvalidValue
         };
 
         explicit Invalid(ErrorType, const std::string&);
