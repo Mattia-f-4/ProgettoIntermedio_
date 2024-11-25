@@ -11,36 +11,47 @@ class LidarDriver
     private:
 
     //costanti per dimensione buffer valori e risoluzione Lidar
-    constexpr int BUFFER_DIM {10}; 
+    constexpr int static BUFFER_DIM {10}; 
     const double risoluzione;
 
     //numero di elementi nel buffer
     int size;
 
     
-    vector<vector<double>> buffer(BUFFER_DIM);
+    vector<vector<double>> buffer;
 
     public:
 
-    LidarDriver(int r); //crea un driver vuoto con risoluzione inserita come parametro
-    //PRODUCE ERRORI
+    //Costruttore per creare un LidarDriver vuoto, con risoluzione inserita come parametro
+    explicit LidarDriver(double);
+    
+    //Costruttore per creare un LidarDriver da un vettore di valori, con risoluzione inserita come parametro
+    LidarDriver(double, vector<vector<double>>);
 
-    //costruttori di copia, assegnamenti di copia robe così? //SE ABBIAMO TEMPO
+    //Costruttore di copia
+    LidarDriver(const LidarDriver&);
+    
+    //Move costructor
+    LidarDriver(LidarDriver&&);
 
-    //si potrebbe avere un costruttore che accetta un intero e uno
-    //std::vector<std::vector<double>> 
+    //Move assignment
+    LidarDriver& operator=(LidarDriver&&);
+    
+    //Aggiunge una nuova scansione al buffer, sovrascrivendo in caso la meno recente
+    void new_scan(vector<double>); 
 
-    void new_scan(vector<double>); //lo memorizza sovrascrivendo in caso la meno recente
-
+    //Restituisce la scansione meno recente, rimuovendola dal buffer
     vector<double> get_scan();
     
+    //Elimina tutte le scansioni salvate
     void clear_buffer();
     
-    double& get_distance(double); //ti da in ogni caso un valore
+    //Restituisce, nell'ultima misuraizione, il valore relativo all'angolo inserito come parametro
+    double& get_distance(double);
     
-    //operator<< va implementato come helper function nel .cpp
-
-    int getSize(){return size;}; //funzione di debug 
+    
+    //Funzione di debug che restituisce 
+    int getSize(){return buffer.max_size();}; 
     
 
 };
