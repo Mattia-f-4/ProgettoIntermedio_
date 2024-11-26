@@ -144,6 +144,24 @@ void LidarDriver::clear_buffer()
     buffer.clear();
 }
 
+double& LidarDriver::get_distance(double val)
+{
+
+    if(val<0){
+        val=0;
+    }
+    if(val>180){
+        val=180;
+    }
+
+    int pos=(val/risoluzione)+1;
+    
+    vector<double> recent_scan=buffer[size%BUFFER_DIM];
+
+    double *dist= &recent_scan[pos];
+
+    return *dist;
+}
 
 
 
