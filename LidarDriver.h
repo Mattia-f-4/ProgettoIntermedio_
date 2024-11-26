@@ -51,7 +51,7 @@ class LidarDriver
     double& get_distance(double);
     
     
-    //Funzione di debug che restituisce 
+    //Funzione di debug che restituisce il numero di elementi presenti nel buffer
     int getSize() const
     {return buffer.max_size();}; 
 
