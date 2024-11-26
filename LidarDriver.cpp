@@ -53,7 +53,7 @@ LidarDriver& LidarDriver::operator=(LidarDriver&& l)
 
 
 //Funzione di supporto per operator<<
-const vector<double>& LidarDriver::getMisurazione(int i) const
+const vector<double>& LidarDriver::getMisurazione(int i)
 {
     if(i<0 || i>=getSize())
     {
@@ -97,7 +97,7 @@ void LidarDriver::new_scan(vector<double> ing)
 
     int limit= ing.size();
     int correct_size=(180/risoluzione)+1;
-    bool add{false};
+    int pos=size%BUFFER_DIM;
 
     //Correggo la dimensione del vettore in ingresso
     if(limit<correct_size){
@@ -108,22 +108,8 @@ void LidarDriver::new_scan(vector<double> ing)
         ing.resize(correct_size);
     }
 
-    if(size<10){
-        buffer[size]=ing;
-        size++;
-        add=true;
-    }
-    else{
-        size=0;
-        add=false;
-        first_rotation=true;
-    }
-
-    if(!add){
-        buffer[size]=ing;
-        size++;
-        add=true;
-    }
+    buffer[pos]=ing;
+    size++;
 
 }
 
@@ -132,12 +118,18 @@ vector<double> LidarDriver::get_scan()
 
     int old;
     vector<double> temp;
-
-    if(!first_rotation){
+    
+    if(size<10){
         old=0;
     }
+    
     else{
-        old=size+1;
+
+        old=(size%BUFFER_DIM)+1;
+
+        if(old==10){
+            old=0;
+        }
     }
 
     temp=buffer[old];
@@ -145,7 +137,6 @@ vector<double> LidarDriver::get_scan()
     buffer.erase(buffer.begin()+old);
 
     return temp;
-
 }
 
 void LidarDriver::clear_buffer()
