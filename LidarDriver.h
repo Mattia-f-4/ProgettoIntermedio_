@@ -1,7 +1,7 @@
 #ifndef LIDARDRIVER_H
 #define LIDARDRIVER_H
 
-
+#include <iostream>
 #include <vector>
 using std::vector;
 
@@ -58,4 +58,7 @@ class LidarDriver
     const vector<double>& getMisurazione(int) const;    
 
 };
+
+std.:ostream& operator<<(std::ostream&, const LidarDriver&);
+
 #endif
