@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+
 using std::cout;
 
 LidarDriver test(vector<double> v4)
@@ -37,41 +38,45 @@ int main()
     //Costruttore 1 parametro
     LidarDriver lidar1(1.0);
 
+    cout << "Mostro l'oggetto Lidar1 vuoto perche' appena creato." << std::endl;
     cout << lidar1 << std::endl;
 
-    lidar1.new_scan(v1);
 
+    lidar1.new_scan(v1);
+    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
     cout<<lidar1 << std::endl;
 
-    lidar1.new_scan(v2);
     
+    lidar1.new_scan(v2);
+    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
     cout<<lidar1 << std::endl;
 
     lidar1.new_scan(v3);
-
+    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
     cout<<lidar1 << std::endl;
 
+       
     vector<double> vout = lidar1.get_scan();
-
+    cout<< "Mostro il vettore Lidar1 dopo che e' stata rimossa una scansione" << std::endl;
     cout << lidar1 << std::endl;
 
     cout << "Il vettore rimosso e' il seguente: "<< to_string(vout) << std::endl;
     
+   
     //Costruttore di copia
     LidarDriver lidar2(lidar1);
     
     cout << lidar2; //scrivi che devono essere uguali 
-
+     
     LidarDriver lidar3(1.0);    
     cout << lidar3 << std::endl;
     //controllo operator=
     lidar3 = lidar1;
-
     cout<<lidar3; //scrivi che devono essere uguali
-
+    
     //Proviamo con un double
     double dout = lidar3.get_distance(90.0);
-
+    
     cout << dout << std::endl;
     //proviamo con un int
     dout = lidar3.get_distance(10);
@@ -86,11 +91,12 @@ int main()
     dout = lidar3.get_distance(200);
 
     cout << dout << std::endl;
-
+    
     lidar3.clear_buffer();
 
     cout << lidar3 << std::endl;
-
+    std::string j;
+    std::cin>>j;
   
     //Test move costructor
     LidarDriver lidar5 = test(v4);
@@ -112,6 +118,7 @@ int main()
         cout << lidar6 << std::endl;
     }
 
-     return 0;
+    
+    return 0;
 }
 
