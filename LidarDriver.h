@@ -56,7 +56,7 @@ class LidarDriver
     {return buffer.max_size();}; 
 
     //Funzione di supporto per operator<<
-    const vector<double>& getMisurazione(int) const;    
+    const vector<double>& getMisurazione(int);    
 
 };
 
