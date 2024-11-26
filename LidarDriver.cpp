@@ -37,9 +37,14 @@ LidarDriver::LidarDriver(LidarDriver&& l) : risoluzione{l.risoluzione} , buffer{
 //Operator=
 LidarDriver& LidarDriver::operator=(const LidarDriver& l)
 {
-    risoluzione = l.risoluzione;
-    size = l.size;
-    buffer = l.buffer;
+    if( this != &l)
+    {
+        risoluzione = l.risoluzione;
+        size = l.size;
+        buffer = l.buffer;
+    }
+    
+    return *this;
 }
 
 
