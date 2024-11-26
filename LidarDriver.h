@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 using std::vector;
 
 
@@ -60,5 +61,6 @@ class LidarDriver
 };
 
 std.:ostream& operator<<(std::ostream&, const LidarDriver&);
+std::string to_string(const vector<double>&);
 
 #endif
