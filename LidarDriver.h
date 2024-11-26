@@ -56,7 +56,7 @@ class LidarDriver
     {return size;}; 
 
     //Funzione di supporto per operator<<
-    const vector<double>& getMisurazione(int);    
+    const vector<double>& getMisurazione(int) const;    
 
 };
 

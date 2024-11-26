@@ -6,6 +6,14 @@
 
 using std::cout;
 
+LidarDriver test(vector<double> v4)
+{
+        LidarDriver lidar4(1.0);
+        lidar4.new_scan(v4);
+
+        return lidar4;
+}
+
 int main() 
 {
     //Vettore con 4 elementi
@@ -54,17 +62,8 @@ int main()
     
     cout << lidar2; //scrivi che devono essere uguali 
 
-    try
-    {
-        cout << "Provo a definire la definizione come 3.0 per verificare il corretto lancio dell'errore" << std::endl;
-        LidarDriver lidar3(3.0);
-    }
-    catch(Invalid) //capire se va bene così la classe per gestione errori
-    {
-        cout << "Errore rilevato, ridefinisco lidar3 con risoluzione 1.0" << std::endl;
-        LidarDriver lidar3(1.0)    
-        cout << lidar3 << std::endl;
-    }
+    LidarDriver lidar3(1.0);    
+    cout << lidar3 << std::endl;
     //controllo operator=
     lidar3 = lidar1;
 
@@ -79,12 +78,12 @@ int main()
 
     cout << dout << std::endl;
     //proviamo fuori dai limiti
-    double dout = lidar3.get_distance(-1.0);
+    dout = lidar3.get_distance(-1.0);
 
     cout << dout << std::endl;
 
     //proviamo fuori dai limiti
-    double dout = lidar3.get_distance(200);
+    dout = lidar3.get_distance(200);
 
     cout << dout << std::endl;
 
@@ -94,20 +93,25 @@ int main()
 
   
     //Test move costructor
-    LidarDriver test(vector<double> v4)
-    {
-        LidarDriver lidar4(1.0);
-        lidar4.new_scan(v4);
-
-        return v4;
-    }
-
-    LidarDirver lidar5 = test(v4);
+    LidarDriver lidar5 = test(v4);
     cout << lidar5 << std::endl;
 
     //Test move assignment
     lidar2 = test(v4);
     cout << lidar2 << std::endl;
 
-    return 0;
+    try
+    {
+        cout << "Provo a definire la definizione come 3.0 per verificare il corretto lancio dell'errore" << std::endl;
+        LidarDriver lidar6(3.0);
+    }
+    catch(Invalid) //capire se va bene così la classe per gestione errori
+    {
+        cout << "Errore rilevato, ridefinisco lidar3 con risoluzione 1.0" << std::endl;
+        LidarDriver lidar6(1.0);    
+        cout << lidar6 << std::endl;
+    }
+
+     return 0;
 }
+

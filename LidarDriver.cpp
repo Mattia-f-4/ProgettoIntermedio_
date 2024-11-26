@@ -54,11 +54,12 @@ LidarDriver& LidarDriver::operator=(LidarDriver&& l)
     risoluzione = l.risoluzione;
     size = l.size;
     buffer = std::move(l.buffer);
+    return *this;
 }
 
 
 //Funzione di supporto per operator<<
-const vector<double>& LidarDriver::getMisurazione(int i)
+const vector<double>& LidarDriver::getMisurazione(int i) const
 {
     if(i<0 || i>=getSize())
     {
@@ -113,6 +114,7 @@ void LidarDriver::new_scan(vector<double> ing)
         ing.resize(correct_size);
     }
 
+    //Incremento il numero di elementi 
     buffer[pos]=ing;
     size++;
 
@@ -124,34 +126,51 @@ vector<double> LidarDriver::get_scan()
     int old;
     vector<double> temp;
     
-    if(size<10){
-        old=0;
-    }
-    
-    else{
 
-        old=(size%BUFFER_DIM)+1;
+    if(size>0){
 
-        if(old==10){
+        //Ci sono elementi nel buffer
+
+        if(size<=10){
+            //Sono stati inseriti al più 10 elementi, quindi il meno recente è il primo
             old=0;
         }
+        
+        else{
+            //Ci sono più di 10 elementi, il meno recente diventa il successivo rispetto all'indice size
+            old=(size%BUFFER_DIM)+1;
+            
+            if(old==10){
+                old=0;
+            }
+        }
+
+        temp=buffer[old];
+        
+        size--;
+        
+        return temp;
     }
 
-    temp=buffer[old];
+    else{
 
-    buffer.erase(buffer.begin()+old);
+        //Non ci sono elementi nel buffer, restituisco un vettore vuoto
+        return temp;
 
-    return temp;
+    }
+
+
 }
 
 void LidarDriver::clear_buffer()
 {
+    //Utilizzo della funzione built in di vector per eliminare tutti gli scan
     buffer.clear();
 }
 
 double& LidarDriver::get_distance(double val)
 {
-
+    //Porta l'angolo dentro il range
     if(val<0){
         val=0;
     }
@@ -159,10 +178,13 @@ double& LidarDriver::get_distance(double val)
         val=180;
     }
 
-    int pos=(val/risoluzione)+1;
+    //Prende l'indice dello scan corrispondente all'angolo
+    int pos=(val/risoluzione);
     
+    //Seleziona lo scan più recente nel buffer
     vector<double> recent_scan=buffer[size%BUFFER_DIM];
 
+    //Restituisce la lettura corrispondente all'angolo dello scan più recente
     double *dist= &recent_scan[pos];
 
     return *dist;
