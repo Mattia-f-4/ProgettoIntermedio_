@@ -53,14 +53,14 @@ class LidarDriver
     
     //Funzione di debug che restituisce il numero di elementi presenti nel buffer
     int getSize() const
-    {return buffer.max_size();}; 
+    {return size;}; 
 
     //Funzione di supporto per operator<<
     const vector<double>& getMisurazione(int);    
 
 };
 
-std.:ostream& operator<<(std::ostream&, const LidarDriver&);
+std::ostream& operator<<(std::ostream&, const LidarDriver&);
 std::string to_string(const vector<double>&);
 
 #endif
