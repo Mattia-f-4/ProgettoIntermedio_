@@ -10,7 +10,8 @@
         enum class ErrorType
         {
             IndexOutOfBoundException,
-            InvalidValue
+            InvalidValue,
+            EmptyContainer
         };
 
         explicit Invalid(ErrorType, const std::string&);
