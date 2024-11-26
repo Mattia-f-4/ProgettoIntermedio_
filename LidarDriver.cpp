@@ -2,6 +2,8 @@
 #include "Invalid.h"
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 using std::vector;
 
@@ -18,7 +20,7 @@ LidarDriver::LidarDriver(double r)
 
     risoluzione = r;
     size = 0;
-};
+}
 
 //Costruttore di copia
 LidarDriver::LidarDriver(const LidarDriver& l) : risoluzione{l.risoluzione} , buffer{l.buffer}, size{l.size} {}
@@ -87,6 +89,70 @@ std::ostream& operator<<(std::ostream& out, const LidarDriver& l)
 
     return out;
 }
+
+//PIETRO
+
+void LidarDriver::new_scan(vector<double> ing)
+{
+
+    int limit= ing.size();
+    int correct_size=(180/risoluzione)+1;
+    bool add{false};
+
+    //Correggo la dimensione del vettore in ingresso
+    if(limit<correct_size){
+        std::fill(ing.begin()+limit,ing.end(),0);
+
+    }
+    else if(limit>correct_size){
+        ing.resize(correct_size);
+    }
+
+    if(size<10){
+        buffer[size]=ing;
+        size++;
+        add=true;
+    }
+    else{
+        size=0;
+        add=false;
+        first_rotation=true;
+    }
+
+    if(!add){
+        buffer[size]=ing;
+        size++;
+        add=true;
+    }
+
+}
+
+vector<double> LidarDriver::get_scan()
+{
+
+    int old;
+    vector<double> temp;
+
+    if(!first_rotation){
+        old=0;
+    }
+    else{
+        old=size+1;
+    }
+
+    temp=buffer[old];
+
+    buffer.erase(buffer.begin()+old);
+
+    return temp;
+
+}
+
+void LidarDriver::clear_buffer()
+{
+    buffer.clear();
+}
+
 
 
 
