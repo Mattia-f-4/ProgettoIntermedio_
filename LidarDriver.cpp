@@ -155,7 +155,7 @@ void LidarDriver::new_scan(vector<double> ing)
 
     //Correggo la dimensione del vettore in ingresso per adattarla alla risoluzione del buffer
     if(limit<correct_size){
-        ing.resize(correct_size);
+        ing.resize(correct_size+1);
         std::fill(ing.begin()+limit,ing.end(),0);
 
     }
