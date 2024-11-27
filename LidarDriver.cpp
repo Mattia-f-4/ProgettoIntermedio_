@@ -96,7 +96,7 @@ const vector<double>& LidarDriver::getMisurazione(int i) const
     return buffer[i];
 }
 
-
+//Funzione che conta gli elemetni presenti nel buffer
 int LidarDriver::size() const{
     if (head >= tail) {
             return head - tail;
@@ -135,7 +135,7 @@ std::ostream& operator<<(std::ostream& out, const LidarDriver& l)
     int numMisurazioni = l.size();
 
     out << "Sono presenti "<<numMisurazioni<<" misurazioni nel buffer." << std::endl;
-
+    //Utilizzo 2 indici per una questione stilistica
     // Itera attraverso il numero di elementi validi nel buffer
     for (int j = 0; j < numMisurazioni; ++j) {
         out << "Misurazione in posizione " << j << " : " << to_string(l.getMisurazione(i)) << std::endl;
@@ -146,14 +146,14 @@ std::ostream& operator<<(std::ostream& out, const LidarDriver& l)
 }
 
 
-
+//Funzione per aggiungere una scansione al buffer
 void LidarDriver::new_scan(vector<double> ing)
 {
-
+    //Controllo il numero di elementi presenti nel vettore in ingresso e controllo quanti ce ne dovrebbero essere in base alla risoluzione dell'oggetto buffer
     int limit= ing.size();
     int correct_size=(180/risoluzione)+1;
 
-    //Correggo la dimensione del vettore in ingresso
+    //Correggo la dimensione del vettore in ingresso per adattarla alla risoluzione del buffer
     if(limit<correct_size){
         ing.resize(correct_size);
         std::fill(ing.begin()+limit,ing.end(),0);
@@ -164,7 +164,7 @@ void LidarDriver::new_scan(vector<double> ing)
     }
 
 
-    //Incremento il numero di elementi 
+    //Incremento il numero di elementi e sposto di conseguenza i puntatori head e tail del buffer
     buffer[head]=ing;
 
     head=(head+1)%BUFFER_DIM;
@@ -175,15 +175,19 @@ void LidarDriver::new_scan(vector<double> ing)
 
 }
 
-
+//Funzione per rimuovere lo scan meno recente dal buffer
 vector<double> LidarDriver::get_scan()
 {
     vector<double> temp;
+
+    //Controllo che il buffer non sia vuoto
 
     if (isempty()) 
     {
         throw (Invalid::ErrorType::EmptyContainer, "Buffer vuoto.");           
     }
+
+    //Rimuovo l'elemento meno recente e sposto il puntatore tail del buffer
 
     temp=buffer[tail];
     tail = (tail + 1) % BUFFER_DIM;
@@ -195,20 +199,24 @@ vector<double> LidarDriver::get_scan()
 
 void LidarDriver::clear_buffer()
 {
-    //Utilizzo della funzione built in di vector per eliminare tutti gli scan
+    //Utilizzo della funzione built in di vector per eliminare tutti gli scan, reset dei puntatori del buffer
     buffer.clear();
     head=0;
     tail=0;
 }
 
 
+//Funzione che restituisce la misura nella scansione più recente
 double& LidarDriver::get_distance(double val)
 {
+
+    //Controllo che il buffer non sia vuoto
     if (isempty()) 
     {
         throw Invalid(Invalid::ErrorType::EmptyContainer, "Buffer vuoto.");
     }
-    //Porta l'angolo dentro il range
+
+    //Porta l'angolo dentro il range 
     if(val<0){
         val=0;
     }
@@ -216,6 +224,7 @@ double& LidarDriver::get_distance(double val)
         val=180;
     }
 
+    //Sceglie la scansione più recente nel buffer
     int recent_pos=(head-1+BUFFER_DIM)%BUFFER_DIM;
     
     //Prende l'indice dello scan corrispondente all'angolo

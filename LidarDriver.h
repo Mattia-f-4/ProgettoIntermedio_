@@ -11,15 +11,17 @@ class LidarDriver
 {
     private:
 
-    //costanti per dimensione buffer valori e risoluzione Lidar
+    //Dimensione fixed del buffer, inizializzata a dim+1 per scelta implementativa
     static constexpr int BUFFER_DIM {11}; 
-    double risoluzione; //VERIFICARE SE SI RIESCE COSTANTE
 
-    //numero di elementi nel buffer
+    //Risoluzione del buffer
+    double risoluzione;
+
+    //Puntatori per la gestione del buffer
     int head;
     int tail;
 
-    
+    //Contenitore delle scansioni
     vector<vector<double>> buffer;
 
     public:
@@ -51,23 +53,27 @@ class LidarDriver
     //Restituisce, nell'ultima misuraizione, il valore relativo all'angolo inserito come parametro
     double& get_distance(double);
     
-
+    //Restituisce il puntatore alla head del buffer
     int getHead() const
     {return head;};
 
+    //Restituisce il puntatore alla tail del buffer
     int getTail() const
     {return tail;};
 
     int getBUFFER_DIM() const
     {return BUFFER_DIM;};
 
+    //Controlla se il buffer è pieno
     bool isFull() const;
     
+    //Controlla se il buffer è vuoto
     bool isempty() const;
 
+    //Conta gli elementi nel buffer
     int size() const;
     
-
+    //Funzione di supporto per evitare che getMisurazione vada fuori dai limiti 
     bool isOutOfBounds(int i) const;
 
     //Funzione di supporto per operator<<
@@ -76,6 +82,6 @@ class LidarDriver
 };
 
 std::ostream& operator<<(std::ostream&, const LidarDriver&);
-std::string to_string(const vector<double>&);
+std::string to_string(const vector<double>&); //Funzione utile per non appesantire il codice di operator<<
 
 #endif
