@@ -19,20 +19,18 @@ LidarDriver::LidarDriver(double r)
     }
 
     risoluzione = r;
-    size = 0;
     head = 0;
     tail = 0;
 }
 
 //Costruttore di copia
-LidarDriver::LidarDriver(const LidarDriver& l) : risoluzione{l.risoluzione} , buffer{l.buffer}, size{l.size}, head{l.head}, tail{l.tail} {}
+LidarDriver::LidarDriver(const LidarDriver& l) : risoluzione{l.risoluzione} , buffer{l.buffer}, head{l.head}, tail{l.tail} {}
 
 
 //Move costructor
-LidarDriver::LidarDriver(LidarDriver&& l) : risoluzione{l.risoluzione} , buffer{std::move(l.buffer)}, size{l.size}, head{l.head}, tail{l.tail}
+LidarDriver::LidarDriver(LidarDriver&& l) : risoluzione{l.risoluzione} , buffer{std::move(l.buffer)}, head{l.head}, tail{l.tail}
 {
     l.risoluzione = 0;
-    l.size = 0;
     
 }
 
@@ -42,7 +40,6 @@ LidarDriver& LidarDriver::operator=(const LidarDriver& l)
     if( this != &l)
     {
         risoluzione = l.risoluzione;
-        size = l.size;
         buffer = l.buffer;
         head = l.head;
         tail = l.tail;
@@ -56,7 +53,6 @@ LidarDriver& LidarDriver::operator=(const LidarDriver& l)
 LidarDriver& LidarDriver::operator=(LidarDriver&& l) 
 {
     risoluzione = l.risoluzione;
-    size = l.size;
     buffer = std::move(l.buffer);
     head = l.head;
     tail = l.tail;
@@ -79,6 +75,18 @@ bool LidarDriver::isOutOfBounds(int i) const
 }
 
 
+bool LidarDriver::isFull() const
+    {
+    return (head+1) % BUFFER_DIM == tail;  // Il buffer è pieno quando head è un passo avanti rispetto a tail
+    }
+
+bool LidarDriver::isempty() const
+    {
+    // Buffer vuoto se head == tail e il buffer non è pieno
+    return head == tail && !isFull();
+    }
+
+
 //Funzione di supporto per operator<<
 const vector<double>& LidarDriver::getMisurazione(int i) const
 {
@@ -86,6 +94,14 @@ const vector<double>& LidarDriver::getMisurazione(int i) const
         throw Invalid(Invalid::ErrorType::IndexOutOfBoundException, "Indice dell'array fuori dai limiti.");
     }
     return buffer[i];
+}
+
+
+int LidarDriver::size() const{
+    if (head >= tail) {
+            return head - tail;
+        }
+        return  BUFFER_DIM - (tail - head);
 }
 
 
@@ -106,16 +122,26 @@ std::string to_string(const vector<double>& v)
 //Operator<<
 std::ostream& operator<<(std::ostream& out, const LidarDriver& l)
 {
-    out << "Sono presenti " << l.getSize() << " misurazioni nel buffer." << std::endl;
-
-    int i = l.getTail(); // Partenza dal tail (elemento meno recente)
-    for (int j = 0; j < l.getSize(); ++j) 
-    { 
-        // Itera attraverso il numero di elementi
-        
-        out << "Misurazione in posizione " << j << " : " << to_string(l.getMisurazione(i)) << std::endl;
-        i = (i + 1) % l.getBUFFER_DIM(); // Avanza ciclicamente
+    if (l.isempty()) {
+        out << "Il buffer è vuoto." << std::endl;
+        return out;
     }
+
+    
+
+    int i = l.getTail();  // Partenza dal tail (elemento meno recente)
+    
+    // Calcolare il numero di misurazioni nel buffer
+    int numMisurazioni = l.size();
+
+    out << "Sono presenti "<<numMisurazioni<<" misurazioni nel buffer." << std::endl;
+
+    // Itera attraverso il numero di elementi validi nel buffer
+    for (int j = 0; j < numMisurazioni; ++j) {
+        out << "Misurazione in posizione " << j << " : " << to_string(l.getMisurazione(i)) << std::endl;
+        i = (i + 1) % l.getBUFFER_DIM();  // Avanza ciclicamente
+    }
+
     return out;
 }
 
@@ -125,7 +151,7 @@ void LidarDriver::new_scan(vector<double> ing)
 {
 
     int limit= ing.size();
-    int correct_size=(180/risoluzione)+2;
+    int correct_size=(180/risoluzione)+1;
 
     //Correggo la dimensione del vettore in ingresso
     if(limit<correct_size){
@@ -143,10 +169,8 @@ void LidarDriver::new_scan(vector<double> ing)
 
     head=(head+1)%BUFFER_DIM;
 
-    if (size < BUFFER_DIM) {
-        size++; // Incrementa solo se non pieno
-    } else {
-        tail = (tail + 1) % BUFFER_DIM; // Sovrascrive il più vecchio
+    if(head==tail){
+        tail=(tail+1)%BUFFER_DIM;
     }
 
 }
@@ -164,7 +188,6 @@ vector<double> LidarDriver::get_scan()
     temp=buffer[tail];
     tail = (tail + 1) % BUFFER_DIM;
 
-    size--;
     return temp;
     
 }
@@ -176,7 +199,6 @@ void LidarDriver::clear_buffer()
     buffer.clear();
     head=0;
     tail=0;
-    size=0;
 }
 
 
@@ -194,18 +216,13 @@ double& LidarDriver::get_distance(double val)
         val=180;
     }
 
-    int recent_pos=(size%BUFFER_DIM)-1;
+    int recent_pos=(head-1+BUFFER_DIM)%BUFFER_DIM;
     
     //Prende l'indice dello scan corrispondente all'angolo
     int pos = static_cast<int>(val/risoluzione);
     
-    //Seleziona lo scan più recente nel buffer
-    vector<double> recent_scan=buffer[recent_pos];
 
-    //Restituisce la lettura corrispondente all'angolo dello scan più recente
-    double *dist= &recent_scan[pos];
-
-    return *dist;
+    return buffer[recent_pos][pos];
 }
 
 

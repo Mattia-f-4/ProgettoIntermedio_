@@ -12,11 +12,10 @@ class LidarDriver
     private:
 
     //costanti per dimensione buffer valori e risoluzione Lidar
-    static constexpr int BUFFER_DIM {10}; 
+    static constexpr int BUFFER_DIM {11}; 
     double risoluzione; //VERIFICARE SE SI RIESCE COSTANTE
 
     //numero di elementi nel buffer
-    int size;
     int head;
     int tail;
 
@@ -52,10 +51,6 @@ class LidarDriver
     //Restituisce, nell'ultima misuraizione, il valore relativo all'angolo inserito come parametro
     double& get_distance(double);
     
-    
-    //Funzione di debug che restituisce il numero di elementi presenti nel buffer
-    int getSize() const
-    {return size;}; 
 
     int getHead() const
     {return head;};
@@ -66,7 +61,13 @@ class LidarDriver
     int getBUFFER_DIM() const
     {return BUFFER_DIM;};
 
-    bool isempty() const{return (size==0);};
+    bool isFull() const;
+    
+    bool isempty() const;
+
+    int size() const;
+    
+
     bool isOutOfBounds(int i) const;
 
     //Funzione di supporto per operator<<
