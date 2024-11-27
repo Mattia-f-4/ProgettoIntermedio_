@@ -3,122 +3,74 @@
 #include "Invalid.h"
 #include <vector>
 #include <string>
+#include <windows.h>
 
 
 using std::cout;
 
-LidarDriver test(vector<double> v4)
-{
-        LidarDriver lidar4(1.0);
-        lidar4.new_scan(v4);
-
-        return lidar4;
-}
-
 int main() 
 {
-    //Vettore con 4 elementi
-    vector<double> v1{1.0,2.0,3.0,4.0};
+    //Creazione di 12 scansioni da aggiungere al buffer
+    vector<double> v1{1.0};
+    vector<double> v2{1.0,2.0};
+    vector<double> v3{1.0,2.0,3.0};
+    vector<double> v4{1.0,2.0,3.0,4.0};
+    vector<double> v5{1.0,2.0,3.0,4.0,5.0};
+    vector<double> v6{1.0,2.0,3.0,4.0,5.0,6.0};
+    vector<double> v7{1.0,2.0,3.0,4.0,5.0,6.0,7.0};
+    vector<double> v8{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0};
+    vector<double> v9{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
+    vector<double> v10{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0};
+    vector<double> v11{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0};
 
     //Vettore con 190 elementi
-    vector<double> v2;
+    vector<double> v12;
 
     // Inserimento di valori da 0 a 190
     for (double i = 0; i <= 190; ++i) 
     {
-        v2.push_back(i);
+        v12.push_back(i);
     }
 
-    //Vettore con 11 elementi
-    vector<double> v3{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0};
+    //Buffer con risoluzione 1
+    LidarDriver lidar1(1);
 
-    //Vettore con 20 elementi
-    vector<double> v4{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0};
-
-    //Costruttore 1 parametro
-    LidarDriver lidar1(1.0);
-
-    cout << "Mostro l'oggetto Lidar1 vuoto perche' appena creato." << std::endl;
-    cout << lidar1 << std::endl;
-
-
+    //Inserimento di 12 scansioni (v1 e v2 vengono sovrascritti)
     lidar1.new_scan(v1);
-    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
-    cout<<lidar1 << std::endl;
-
-    
     lidar1.new_scan(v2);
-    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
-    cout<<lidar1 << std::endl;
-
     lidar1.new_scan(v3);
-    cout<< "Mostro il vettore Lidar1 con una scansione aggiunta." << std::endl;
-    cout<<lidar1 << std::endl;
+    lidar1.new_scan(v4);
+    lidar1.new_scan(v5);
+    lidar1.new_scan(v6);
+    lidar1.new_scan(v7);
+    lidar1.new_scan(v8);
+    lidar1.new_scan(v9);
+    lidar1.new_scan(v10);
+    lidar1.new_scan(v11);
+    lidar1.new_scan(v12);
 
-       
-    vector<double> vout = lidar1.get_scan();
-    cout<< "Mostro il vettore Lidar1 dopo che e' stata rimossa una scansione" << std::endl;
-    cout << lidar1 << std::endl;
 
-    cout << "Il vettore rimosso e' il seguente: "<< to_string(vout) << std::endl;
-    
-   
-    //Costruttore di copia
-    LidarDriver lidar2(lidar1);
-    
-    cout << lidar2; //scrivi che devono essere uguali 
-     
-    LidarDriver lidar3(1.0);    
-    cout << lidar3 << std::endl;
-    //controllo operator=
-    lidar3 = lidar1;
-    cout<<lidar3; //scrivi che devono essere uguali
-    
-    //Proviamo con un double
-    double dout = lidar3.get_distance(90.0);
-    
-    cout << dout << std::endl;
-    //proviamo con un int
-    dout = lidar3.get_distance(10);
+    cout<<lidar1;
 
-    cout << dout << std::endl;
-    //proviamo fuori dai limiti
-    dout = lidar3.get_distance(-1.0);
+    //Estrazione scansione meno recente 
+    vector<double> ext = lidar1.get_scan();
 
-    cout << dout << std::endl;
+    //Controllo che sia v3
+    for (double i: ext)
+        std::cout << i << ' ';
 
-    //proviamo fuori dai limiti
-    dout = lidar3.get_distance(200);
+    std::cout<<std::endl;
 
-    cout << dout << std::endl;
-    
-    lidar3.clear_buffer();
+    //Richiedo la misurazione all'angolo 130, dovrebbe restituire 130 poichè la scansione più recente è v12
+    std::cout<<"La misura a 130 gradi è: "<<lidar1.get_distance(130)<<std::endl;
 
-    cout << lidar3 << std::endl;
-    std::string j;
-    std::cin>>j;
-  
-    //Test move costructor
-    LidarDriver lidar5 = test(v4);
-    cout << lidar5 << std::endl;
+    //Svuoto il buffer 
+    lidar1.clear_buffer();
 
-    //Test move assignment
-    lidar2 = test(v4);
-    cout << lidar2 << std::endl;
+    //Controllo che sia vuoto
+    cout<<lidar1;
 
-    try
-    {
-        cout << "Provo a definire la definizione come 3.0 per verificare il corretto lancio dell'errore" << std::endl;
-        LidarDriver lidar6(3.0);
-    }
-    catch(Invalid) //capire se va bene così la classe per gestione errori
-    {
-        cout << "Errore rilevato, ridefinisco lidar3 con risoluzione 1.0" << std::endl;
-        LidarDriver lidar6(1.0);    
-        cout << lidar6 << std::endl;
-    }
-
-    
+    system("pause");
     return 0;
 }
 
